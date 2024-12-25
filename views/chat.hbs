@@ -1,39 +1,13 @@
 <!-- Sidebar -->
 <div class="flex h-screen">
     <!-- Left Sidebar -->
-    <div class="w-64 bg-gray-100 h-full p-4 flex flex-col justify-between">
-        <!-- Sidebar Header -->
+      <div class="w-64 bg-gray-100 h-full p-4 flex flex-col justify-between">
         <div>
-            <button class="bg-black text-white px-4 py-2 rounded mb-4 w-full text-center">
+            <button id="newChatBtn" class="bg-black text-white px-4 py-2 rounded mb-4 w-full text-center">
                 New Chat
             </button>
             <div class="flex items-center mb-4">
-                <input class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-400" type="text" placeholder="&#x1F50D Search" />
-            </div>
-            <!-- Prompts Section -->
-            <div>
-                <p class="text-gray-400 font-semibold mb-2">Your Chats</p>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between text-gray-700 hover:text-black">
-                        <p>Am I handsome?</p>
-                    </div>
-                    <div class="flex items-center justify-between text-gray-700 hover:text-black">
-                        <p>I need a GF</p>
-                    </div>
-                    <div class="flex items-center justify-between text-gray-700 hover:text-black">
-                        <p>6 packs in 1 day</p>
-                    </div>
-                </div>
-
-                <p class="text-gray-400 font-semibold mt-6 mb-2">Yesterday</p>
-                <div class="flex items-center justify-between hover:text-black">
-                    <p class="truncate">Can I bec...</p>
-                    <div class="flex items-center space-x-2">
-                        <button class="hover:text-gray-500">&#9733;</button>
-                        <button class="hover:text-gray-500">✏️</button>
-                        <button class="hover:text-gray-500">🗑️</button>
-                    </div>
-                </div>
+                <input id="searchInput" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-400" type="text" placeholder="🔍 Search" />
             </div>
         </div>
     </div>
@@ -44,37 +18,17 @@
         <div class="p-4 border-b text-xl font-semibold">Chat AI</div>
 
         <!-- Chat Messages -->
-        <div class="flex-1 p-4 space-y-4 overflow-auto">
-            <!-- User Message -->
-            <div class="flex justify-end">
-                <div class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg max-w-md">
-                    Can I become more handsome?
-                </div>
-            </div>
+        <div id="chatMessages" class="flex-1 p-4 space-y-4 overflow-auto"></div>
 
-            <!-- AI Response -->
-            <div class="flex items-start">
-                <div>
-                    <p class="italic text-gray-500 mb-1">Chat AI</p>
-                    <div class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg max-w-md">
-                        No, you cannot.
-                    </div>
-                    <div class="flex space-x-2 mt-1">
-                        <button class="text-gray-400 hover:text-black text-sm">👍</button>
-                        <button class="text-gray-400 hover:text-black text-sm">👎</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chat Input -->
-        <div class="p-4 border-t">
-            <div class="flex items-center bg-gray-200 rounded-lg">
-                <input type="text" placeholder="Type a message..." class="flex-1 p-3 bg-gray-200 outline-none" />
-                <button class="p-3 text-gray-500 hover:text-black">
-                    ➤
+        <!-- Chat Input (hidden by default) -->
+        <div id="chatInput" class="sticky bottom-0 left-0 right-0 p-4 bg-gray-100 border-t hidden">
+            <div class="flex items-center bg-gray-200 rounded-lg max-w-4xl mx-auto">
+                <input id="messageInput" type="text" placeholder="Type a message..." class="flex-1 p-3 bg-gray-200 outline-none" />
+                <button id="sendBtn" class="p-3 text-gray-500 hover:text-black">
+                  ➤
                 </button>
             </div>
         </div>
     </div>
 </div>
+<script src="/javascripts/chat.js"></script>
