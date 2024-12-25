@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const chatController = require('./chatController');
+const router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('chat', { title: 'AI Chat - New Chat' });
-});
+router.get('/', chatController.renderChatPage);
+router.post('/create', chatController.createChat);
+router.post('/send', chatController.sendMessage);
 
 module.exports = router;
