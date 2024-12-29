@@ -1,21 +1,21 @@
 const axios = require('axios');
-const {createNewChat, findChatById, updateChatMessages, getChats, findChatByName} = require('./chatModel');
+const chatModel = require('./chatModel');
 
 const JARVIS_API_URL = process.env.JARVIS_API_URL;
 const JARVIS_API_KEY = process.env.JARVIS_API_KEY;
 
-var createChat = async (req, res) => { 
+const createChat = async (req, res) => { 
     try {
         const { name } = req.body;
 
         // Check if the chat name already exists
-        const existingChat = await findChatByName(name);
+        const existingChat = await chatModel.findChatByName(name);
         if (existingChat) {
           return res.status(400).json({ error: 'Chat name already exists. Please choose a different name.' });
         }
 
         // Create the new chat
-        const chat = await createNewChat(name);
+        const chat = await chatModel.createNewChat(name);
         res.json(chat);
     } catch (error) {
         console.error('Error creating chat:', error);
@@ -23,7 +23,7 @@ var createChat = async (req, res) => {
     }
 };
 
-var sendMessage = async (req, res) => {
+const sendMessage = async (req, res) => {
     try {
         const { id, message } = req.body;
 
@@ -35,7 +35,7 @@ var sendMessage = async (req, res) => {
         console.log('Fetching chat with ID:', id);
 
         // Fetch the chat
-        const chat = await findChatById(id);
+        const chat = await chatModel.findChatById(id);
         if (!chat) {
             return res.status(404).json({ error: 'Chat not found' });
         }
@@ -67,7 +67,7 @@ var sendMessage = async (req, res) => {
         console.log('AI Response:', aiResponse);
 
         // Update the chat messages
-        const updatedChat = await updateChatMessages(id, message, aiResponse).catch((err) => {
+        const updatedChat = await chatModel.updateChatMessages(id, message, aiResponse).catch((err) => {
             console.error('Error updating chat messages:', err);
             throw new Error('Database update failed.');
         });
@@ -79,13 +79,62 @@ var sendMessage = async (req, res) => {
     }
 };
 
-var renderChatPage = async (req, res) => {
+const renderChatPage = async (req, res) => {
     try {
-      const chats = await getChats(); // Add this function in chatModel
-      res.render('chat', { title: 'Chat', chats });
+        console.log('Fetching chats...');
+        const chats = await chatModel.getChats();
+        console.log('Fetched chats:', JSON.stringify(chats, null, 2));
+        
+        res.render('chat', { 
+            title: 'Chat',
+            chats: chats || [] // Ensure we always pass an array, even if empty
+        });
+        console.log('Page rendered with chats');
     } catch (error) {
-      res.status(500).json({ error: 'Error rendering chat page' });
+        console.error('Error fetching chats:', error);
+        // Still render the page but with empty chats array
+        res.render('chat', { 
+            title: 'Chat',
+            chats: [],
+            error: 'Failed to load chats'
+        });
+        console.log('Page rendered with error');
+    }
+};
+
+// Delete a chat
+const handleDeleteChat = async (req, res) => {
+    try {
+        const { id } = req.body;
+        await chatModel.deleteChat(id);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting chat:', error);
+        res.status(500).json({ error: 'Failed to delete chat' });
+    }
+};
+
+// Get chat history
+const getChatHistory = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const chat = await chatModel.findChatById(id);
+        
+        if (!chat) {
+            return res.status(404).json({ error: 'Chat not found' });
+        }
+        
+        // Format messages into an array of objects with userMessage and aiResponse
+        const messages = chat.userMessages.map((msg, index) => ({
+            userMessage: msg,
+            aiResponse: chat.aiResponses[index]
+        }));
+        
+        res.json({ messages });
+    } catch (error) {
+        console.error('Error getting chat history:', error);
+        res.status(500).json({ error: 'Failed to get chat history' });
     }
 };
   
-module.exports = {renderChatPage, sendMessage, createChat};
+module.exports = {renderChatPage, sendMessage, createChat, handleDeleteChat, getChatHistory};
