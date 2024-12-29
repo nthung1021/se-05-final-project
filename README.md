@@ -1,6 +1,7 @@
 # Software Engineering - Simple AI Chat Application
 
 A simple software for users to chat with AI chatbot, also allows users to view chat history and see previous chats
+
 (Implementation is in progress and this is not the release version of the source code)
 
 ## Link to GitHub code
