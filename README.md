@@ -57,4 +57,4 @@ npm run start
 
 ## Live demo
 
-(will be released soon)
+https://se-group05-final-project.onrender.com
