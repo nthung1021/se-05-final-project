@@ -1,13 +1,29 @@
 <!-- Sidebar -->
 <div class="flex h-screen">
     <!-- Left Sidebar -->
-      <div class="w-64 bg-gray-100 h-full p-4 flex flex-col justify-between">
-        <div>
-            <button id="newChatBtn" class="bg-black text-white px-4 py-2 rounded mb-4 w-full text-center">
+    <div class="w-64 bg-gray-100 h-full p-4 flex flex-col">
+        <div class="flex flex-col h-full">
+            <button id="newChatBtn" class="bg-black text-white px-4 py-2 rounded mb-4 w-full text-center hover:bg-gray-800 transition-colors">
                 New Chat
             </button>
             <div class="flex items-center mb-4">
-                <input id="searchInput" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-400" type="text" placeholder="🔍 Search" />
+                <input id="searchInput" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-400" type="text" placeholder="🔍 Search" />
+            </div>
+
+            <!-- Chat History List -->
+            <div class="flex-1 overflow-y-auto space-y-2">
+                {{#each chats}}
+                <div class="chat-item group relative bg-white rounded-lg p-3 hover:bg-gray-50 cursor-pointer transition-colors" data-chat-id="{{this.id}}">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-700 truncate">{{this.name}}</span>
+                        <button class="delete-btn invisible group-hover:visible p-1 hover:bg-gray-200 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                {{/each}}
             </div>
         </div>
     </div>
