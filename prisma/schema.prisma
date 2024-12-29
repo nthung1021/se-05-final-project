@@ -19,6 +19,8 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  resetPasswordToken    String?  // Token reset password
+  resetPasswordExpires  DateTime? // Token expired time
 }
 
 model Chat {
@@ -27,3 +29,13 @@ model Chat {
   userMessages String[] 
   aiResponses  String[] 
 }
+
+model Session {
+  id        String   @id @default(cuid())
+  sid       String   @unique
+  data      Json
+  expire    DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
