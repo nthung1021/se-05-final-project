@@ -17,12 +17,17 @@
                 <div class="flex ">
                     <nav class="hidden sm:block space-x-8 text-xl px-4 py-2">
                         <a href="/home" class="text-gray-600 hover:text-gray-800">Home</a>
-                        <a href="/chat" class="text-gray-600 hover:text-gray-800">New Chat</a>
+                        <a href="/chat" class="text-gray-600 hover:text-gray-800">Chat</a>
+                        {{#if user}}
+                        <a href="" class="text-black font-bold hover:text-gray-800">{{user.username}}</a>
+                        <a href="/users/logout" class="bg-red-500 text-white text-xl ml-2 px-4 py-2 rounded hover:bg-red-600">Log Out</a>
+                        {{else}}
                         <a href="/users/register" class="text-gray-600 hover:text-gray-800">Register</a>
+                        <a href="/users/login" class="bg-red-500 text-white text-xl ml-2 px-4 py-2 rounded hover:bg-red-600">Log In</a>
+                        {{/if}}
                     </nav>
-                    <a href="/users/login" class="bg-red-500 text-white text-xl ml-2 px-4 py-2 rounded hover:bg-red-600">Log In</a>
+                    
                 </div>
-                <!-- Log In Button -->
                 
             </div>
         </header>
