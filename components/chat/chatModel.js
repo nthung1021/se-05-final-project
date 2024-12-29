@@ -34,7 +34,7 @@ const updateChatMessages = async (id, userMessage, aiResponse) => {
 const getChats = async () => {
     return prisma.chat.findMany({
         orderBy: {
-            id: 'desc', // Optional: Order chats by newest first
+            id: 'desc', // Order chats by newest first
         },
         select: {
             id: true,
@@ -47,4 +47,11 @@ const findChatByName = async (name) => {
     return prisma.chat.findUnique({where: { name },});
 };
 
-module.exports = {createNewChat, findChatById, updateChatMessages, getChats, findChatByName};
+// Delete a chat by ID
+const deleteChat = async (id) => {
+    return prisma.chat.delete({
+        where: { id: parseInt(id, 10) },
+    });
+};
+
+module.exports = {createNewChat, findChatById, updateChatMessages, getChats, findChatByName, deleteChat};
