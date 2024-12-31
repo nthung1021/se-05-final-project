@@ -2,17 +2,11 @@
 
 A simple software for users to chat with AI chatbot, also allows users to view chat history and see previous chats
 
-(Implementation is in progress and this is not the release version of the source code)
-
 ## Link to GitHub code
 
 https://github.com/nthung1021/se-05-final-project
 
-## Web Preview
-
-(will be released soon)
-
-## Getting started
+## How to execute code in local device
 
 1. Download the source code in ZIP file or git clone the source code
 
