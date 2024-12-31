@@ -7,15 +7,16 @@ const JARVIS_API_KEY = process.env.JARVIS_API_KEY;
 const createChat = async (req, res) => { 
     try {
         const { name } = req.body;
+        const userId = req.user.id; // Get the user ID from the session
 
-        // Check if the chat name already exists
-        const existingChat = await chatModel.findChatByName(name);
+        // Check if the chat name already exists for this user
+        const existingChat = await chatModel.findChatByName(name, userId);
         if (existingChat) {
           return res.status(400).json({ error: 'Chat name already exists. Please choose a different name.' });
         }
 
-        // Create the new chat
-        const chat = await chatModel.createNewChat(name);
+        // Create the new chat with user ID
+        const chat = await chatModel.createNewChat(name, userId);
         res.json(chat);
     } catch (error) {
         console.error('Error creating chat:', error);
@@ -26,6 +27,7 @@ const createChat = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         const { id, message } = req.body;
+        const userId = req.user.id; // Get the user ID from the session
 
         // Validate input
         if (!id || !message) {
@@ -34,8 +36,8 @@ const sendMessage = async (req, res) => {
 
         console.log('Fetching chat with ID:', id);
 
-        // Fetch the chat
-        const chat = await chatModel.findChatById(id);
+        // Fetch the chat (ensuring it belongs to the user)
+        const chat = await chatModel.findChatById(id, userId);
         if (!chat) {
             return res.status(404).json({ error: 'Chat not found' });
         }
@@ -66,8 +68,8 @@ const sendMessage = async (req, res) => {
         
         console.log('AI Response:', aiResponse);
 
-        // Update the chat messages
-        const updatedChat = await chatModel.updateChatMessages(id, message, aiResponse).catch((err) => {
+        // Update the chat messages (ensuring it belongs to the user)
+        const updatedChat = await chatModel.updateChatMessages(id, userId, message, aiResponse).catch((err) => {
             console.error('Error updating chat messages:', err);
             throw new Error('Database update failed.');
         });
@@ -81,13 +83,18 @@ const sendMessage = async (req, res) => {
 
 const renderChatPage = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.redirect('/users/login');
+        }
+
         console.log('Fetching chats...');
-        const chats = await chatModel.getChats();
+        const chats = await chatModel.getChats(req.user.id); // Get chats for the specific user
         console.log('Fetched chats:', JSON.stringify(chats, null, 2));
         
         res.render('chat', { 
             title: 'Chat',
-            chats: chats || [] // Ensure we always pass an array, even if empty
+            chats: chats || [], // Ensure we always pass an array, even if empty
+            user: req.user // Pass user info to the template
         });
         console.log('Page rendered with chats');
     } catch (error) {
@@ -96,7 +103,8 @@ const renderChatPage = async (req, res) => {
         res.render('chat', { 
             title: 'Chat',
             chats: [],
-            error: 'Failed to load chats'
+            error: 'Failed to load chats',
+            user: req.user
         });
         console.log('Page rendered with error');
     }
@@ -106,7 +114,10 @@ const renderChatPage = async (req, res) => {
 const handleDeleteChat = async (req, res) => {
     try {
         const { id } = req.body;
-        await chatModel.deleteChat(id);
+        const userId = req.user.id;
+
+        // Delete the chat (only if it belongs to the user)
+        await chatModel.deleteChat(id, userId);
         res.json({ success: true });
     } catch (error) {
         console.error('Error deleting chat:', error);
@@ -118,7 +129,10 @@ const handleDeleteChat = async (req, res) => {
 const getChatHistory = async (req, res) => {
     try {
         const { id } = req.params;
-        const chat = await chatModel.findChatById(id);
+        const userId = req.user.id;
+
+        // Get chat (only if it belongs to the user)
+        const chat = await chatModel.findChatById(id, userId);
         
         if (!chat) {
             return res.status(404).json({ error: 'Chat not found' });
@@ -136,5 +150,26 @@ const getChatHistory = async (req, res) => {
         res.status(500).json({ error: 'Failed to get chat history' });
     }
 };
-  
-module.exports = {renderChatPage, sendMessage, createChat, handleDeleteChat, getChatHistory};
+
+// Get list of chats for current user
+const getChatList = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
+        const chats = await chatModel.getChats(req.user.id);
+        res.json(chats || []);
+    } catch (error) {
+        console.error('Error fetching chat list:', error);
+        res.status(500).json({ error: 'Error fetching chat list' });
+    }
+};
+
+module.exports = {
+    renderChatPage,
+    sendMessage,
+    createChat,
+    handleDeleteChat,
+    getChatHistory,
+    getChatList
+};
