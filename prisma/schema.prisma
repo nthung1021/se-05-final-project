@@ -5,37 +5,42 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  resetPasswordToken    String?  // Token reset password
-  resetPasswordExpires  DateTime? // Token expired time
+    id        Int      @id @default(autoincrement())
+    username  String   @unique
+    email     String   @unique
+    password  String
+    createdAt DateTime @default(now())
+    resetPasswordToken    String?  // Token reset password
+    resetPasswordExpires  DateTime? // Token expired time
+    chats     Chat[]    // Relation to Chat model
 }
 
 model Chat {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  userMessages String[] 
-  aiResponses  String[] 
+    id          Int      @id @default(autoincrement())
+    name        String   
+    userMessages String[] 
+    aiResponses  String[] 
+    userId      Int      // Foreign key for User
+    user        User     @relation(fields: [userId], references: [id])
+    createdAt   DateTime @default(now())
+
+    @@unique([name, userId]) // Ensure uniqueness per user
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  sid       String   @unique
-  data      Json
-  expire    DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id        String   @id @default(cuid())
+    sid       String   @unique
+    data      Json
+    expire    DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
-
