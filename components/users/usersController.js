@@ -105,7 +105,7 @@ const postForgotPassword = async (req, res) => {
         await usersModel.addTokenAndExpire(email, resetToken, expires);
 
         // Send email and reset-password link with endpoint is token
-        const resetLink = `http://localhost:3000/users/resetpassword/${resetToken}`;
+        const resetLink = `/users/resetpassword/${resetToken}`;
 
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com', // Can use other account
